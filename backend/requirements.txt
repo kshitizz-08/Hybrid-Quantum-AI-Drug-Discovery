@@ -1,0 +1,39 @@
+fastapi==0.119.0
+uvicorn[standard]==0.37.0
+sqlalchemy==2.0.43
+alembic==1.19.1
+pydantic==2.11.7
+email-validator>=2.0.0
+pydantic-settings==2.15.0
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+# NOTE: bcrypt must be pinned to 4.x for passlib 1.7.4 compatibility
+# bcrypt 5.x changes the API in ways that break passlib's dummy_verify
+bcrypt==4.0.1
+python-multipart==0.0.20
+psycopg2-binary==2.9.11
+aiosqlite==0.21.0
+pandas==2.3.0
+numpy==2.3.1
+scikit-learn==1.9.0
+xgboost==3.2.0
+python-dotenv==1.1.1
+httpx>=0.24.0
+
+# ── M4: Quantum Optimization ─────────────────────────────────────────
+# NOTE: The Python 'vina' package is NOT installed — it requires Boost C++ headers.
+# The vina CLI must be installed separately from https://vina.scripps.edu/
+qiskit==2.5.2
+qiskit-algorithms==0.4.0
+qiskit-optimization==0.7.0
+
+# ── M5: Molecular Docking ─────────────────────────────────────────────
+# rdkit: DLLs are blocked by Windows Application Control on this machine.
+# RDKit is still declared here for environments where it is permitted.
+# meeko requires rdkit; skip meeko install if RDKit DLLs are blocked.
+rdkit>=2026.9.1
+meeko>=0.8.0
+
+# ── Testing ───────────────────────────────────────────────────────────
+pytest>=9.0.0
+pytest-asyncio>=1.4.0

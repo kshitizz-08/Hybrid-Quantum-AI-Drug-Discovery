@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "dataset": "delaney-processed.csv",
+    "source": "Delaney ESOL (2004)",
+    "target_column": "measured log solubility in mols per litre",
+    "target_units": "log10(mol/L)",
+    "random_seed": 42,
+    "n_features": 8,
+    "feature_description": "8 RDKit physicochemical descriptors",
+    "features_used": [
+      "molecular_weight",
+      "logP",
+      "TPSA",
+      "HBD",
+      "HBA",
+      "rotatable_bonds",
+      "ring_count",
+      "fraction_csp3"
+    ],
+    "train_ratio": 0.7,
+    "test_ratio": 0.3,
+    "hyperparameters": {
+      "n_estimators": 200,
+      "max_depth": null,
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "model_file": "esol_solubility_regressor.joblib",
+    "invalid_smiles": 0
+  },
+  "inspection": {
+    "source": "Delaney ESOL (2004)",
+    "citation": "Delaney, J.S. (2004). ESOL: Estimating Aqueous Solubility Directly from Molecular Structure. J. Chem. Inf. Comput. Sci., 44(3), 1000-1005.",
+    "file": "delaney-processed.csv",
+    "total_rows": 1128,
+    "total_columns": 10,
+    "columns": [
+      "Compound ID",
+      "ESOL predicted log solubility in mols per litre",
+      "Minimum Degree",
+      "Molecular Weight",
+      "Number of H-Bond Donors",
+      "Number of Rings",
+      "Number of Rotatable Bonds",
+      "Polar Surface Area",
+      "measured log solubility in mols per litre",
+      "smiles"
+    ],
+    "smiles_present": 1128,
+    "smiles_missing": 0,
+    "target_column": "measured log solubility in mols per litre",
+    "target_units": "log10(mol/L)",
+    "target_stats": {
+      "min": -11.6,
+      "max": 1.58,
+      "mean": -3.05010195035461,
+      "median": -2.86,
+      "std": 2.096441210089345
+    },
+    "missing_target": 0
+  },
+  "metrics": {
+    "MAE": 0.5115703780780911,
+    "RMSE": 0.7305029760032536,
+    "R2": 0.8830008216672476,
+    "n_test_samples": 339,
+    "n_train_samples": 789
+  }
+}

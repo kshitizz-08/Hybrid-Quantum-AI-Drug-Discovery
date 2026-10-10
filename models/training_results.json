@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "training_date": "2026-08-17T10:46:56.012737Z",
+    "dataset": "EGFR_bioactivity_raw.csv",
+    "dataset_source": "ChEMBL Database",
+    "target": "Epidermal Growth Factor Receptor",
+    "target_chembl_id": "CHEMBL203",
+    "chembl_version": "chembl_33",
+    "random_seed": 42,
+    "feature_type": "rdkit_descriptors",
+    "features_used": [
+      "molecular_weight",
+      "logP",
+      "TPSA",
+      "HBD",
+      "HBA",
+      "rotatable_bonds",
+      "ring_count",
+      "fraction_csp3"
+    ],
+    "morgan_radius": 2,
+    "morgan_nbits": 2048
+  },
+  "dataset_stats": {
+    "initial_records": 18454,
+    "final_molecules": 10407,
+    "valid_rdkit_molecules": 10407,
+    "invalid_rdkit_molecules": 0,
+    "n_train": 7284,
+    "n_val": 1561,
+    "n_test": 1562
+  },
+  "models": {
+    "RandomForest": {
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": null,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "max_features": "sqrt",
+        "random_state": 42,
+        "n_jobs": -1
+      },
+      "model_file": "egfr_random_forest.joblib",
+      "test_metrics": {
+        "MAE": 0.7339153079314509,
+        "RMSE": 0.9574109376348392,
+        "R2": 0.47753219287406345,
+        "n_test_samples": 1562
+      },
+      "training_time_seconds": 0.48233652114868164
+    },
+    "XGBoost": {
+      "hyperparameters": {
+        "n_estimators": 200,
+        "learning_rate": 0.1,
+        "max_depth": 6,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbosity": 0
+      },
+      "model_file": "egfr_xgboost.joblib",
+      "test_metrics": {
+        "MAE": 0.7703410830649898,
+        "RMSE": 0.9979443805598862,
+        "R2": 0.4323567989985313,
+        "n_test_samples": 1562
+      },
+      "training_time_seconds": 0.3065769672393799
+    }
+  },
+  "best_model_by_r2": "RandomForest"
+}

@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "dataset": "Tox21.csv",
+    "source": "Tox21 \u2014 MoleculeNet",
+    "endpoint": "NR-AR",
+    "label_type": "binary (0=inactive, 1=active/toxic)",
+    "random_seed": 42,
+    "n_features": 2056,
+    "feature_description": "8 RDKit descriptors + 2048 Morgan fingerprints (ECFP4, radius=2)",
+    "train_ratio": 0.7,
+    "test_ratio": 0.3,
+    "hyperparameters": {
+      "n_estimators": 200,
+      "max_depth": null,
+      "class_weight": "balanced",
+      "random_state": 42,
+      "n_jobs": -1
+    },
+    "model_file": "tox21_nrar_classifier.joblib"
+  },
+  "inspection": {
+    "source": "Tox21 \u2014 MoleculeNet",
+    "file": "Tox21.csv",
+    "total_rows": 7831,
+    "total_columns": 14,
+    "columns": [
+      "NR-AR",
+      "NR-AR-LBD",
+      "NR-AhR",
+      "NR-Aromatase",
+      "NR-ER",
+      "NR-ER-LBD",
+      "NR-PPAR-gamma",
+      "SR-ARE",
+      "SR-ATAD5",
+      "SR-HSE",
+      "SR-MMP",
+      "SR-p53",
+      "mol_id",
+      "smiles"
+    ],
+    "smiles_present": 7831,
+    "smiles_missing": 0,
+    "chosen_endpoint": "NR-AR",
+    "endpoint_description": "Nuclear Receptor \u2014 Androgen Receptor (NR-AR)",
+    "label_type": "binary (0=inactive, 1=active/toxic)",
+    "endpoint_stats": {
+      "total": 7831,
+      "toxic": 309,
+      "non_toxic": 6956,
+      "missing": 566
+    },
+    "all_endpoints": [
+      "NR-AR",
+      "NR-AR-LBD",
+      "NR-AhR",
+      "NR-Aromatase",
+      "NR-ER",
+      "NR-ER-LBD",
+      "NR-PPAR-gamma",
+      "SR-ARE",
+      "SR-ATAD5",
+      "SR-HSE",
+      "SR-MMP",
+      "SR-p53"
+    ]
+  },
+  "metrics": {
+    "accuracy": 0.9664830119375574,
+    "precision": 0.6610169491525424,
+    "recall": 0.42391304347826086,
+    "F1": 0.5165562913907285,
+    "ROC_AUC": 0.7814831797907374,
+    "confusion_matrix": [
+      [
+        2066,
+        20
+      ],
+      [
+        53,
+        39
+      ]
+    ],
+    "n_test_samples": 2178,
+    "n_train_samples": 5080
+  }
+}
