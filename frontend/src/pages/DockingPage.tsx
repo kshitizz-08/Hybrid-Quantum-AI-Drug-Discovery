@@ -98,7 +98,7 @@ const DockingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-surface-950 via-surface-900 to-surface-950">
+    <div className="min-h-screen pt-16 pl-56 bg-gradient-to-br from-surface-950 via-surface-900 to-surface-950">
       {/* Header */}
       <div className="border-b border-white/5 bg-surface-900/70 backdrop-blur-sm px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

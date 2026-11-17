@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { experimentsApi, pipelineApi } from '../api/client';
+import { experimentsApi, pipelineApi, rankingApi } from '../api/client';
 import type { ExperimentWithTarget, JobStatus } from '../types';
 import { StatusBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -15,6 +15,7 @@ interface PipelineStageInfo {
   icon: string;
   statusKey: keyof ExperimentWithTarget | null;
   milestone: string;
+  getPath: (id: string | number) => string;
 }
 
 const PIPELINE_STAGES: PipelineStageInfo[] = [
@@ -26,6 +27,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🔬',
     statusKey: null,
     milestone: 'M1',
+    getPath: (id) => `/experiments/${id}/ai`,
   },
   {
     id: 'preprocess',
@@ -35,6 +37,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '⚗️',
     statusKey: 'preprocess_status',
     milestone: 'M3',
+    getPath: (id) => `/experiments/${id}/ai`,
   },
   {
     id: 'features',
@@ -44,6 +47,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🧬',
     statusKey: 'screen_status',
     milestone: 'M3',
+    getPath: (id) => `/experiments/${id}/ai`,
   },
   {
     id: 'ai',
@@ -53,6 +57,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🤖',
     statusKey: 'screen_status',
     milestone: 'M3',
+    getPath: (id) => `/experiments/${id}/ai`,
   },
   {
     id: 'filter',
@@ -62,6 +67,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🔍',
     statusKey: 'screen_status',
     milestone: 'M3',
+    getPath: (id) => `/experiments/${id}/admet`,
   },
   {
     id: 'quantum',
@@ -71,6 +77,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '⚛️',
     statusKey: 'quantum_status',
     milestone: 'M4',
+    getPath: (id) => `/experiments/${id}/quantum`,
   },
   {
     id: 'docking',
@@ -80,6 +87,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🏗️',
     statusKey: 'docking_status',
     milestone: 'M5',
+    getPath: (id) => `/experiments/${id}/docking`,
   },
   {
     id: 'validate',
@@ -89,6 +97,7 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '✅',
     statusKey: null,
     milestone: 'M6',
+    getPath: (id) => `/experiments/${id}/ranking`,
   },
   {
     id: 'rank',
@@ -98,12 +107,16 @@ const PIPELINE_STAGES: PipelineStageInfo[] = [
     icon: '🏆',
     statusKey: null,
     milestone: 'M6',
+    getPath: (id) => `/experiments/${id}/ranking`,
   },
 ];
 
-const getStageStatus = (stage: PipelineStageInfo, experiment: ExperimentWithTarget): JobStatus | 'not_started' => {
+const getStageStatus = (stage: PipelineStageInfo, experiment: ExperimentWithTarget, rankingDone: boolean): JobStatus | 'not_started' => {
   if (stage.id === 'data') {
     return experiment.dataset_path ? 'COMPLETED' : 'PENDING';
+  }
+  if (stage.id === 'validate' || stage.id === 'rank') {
+    return rankingDone ? 'COMPLETED' : 'PENDING';
   }
   if (!stage.statusKey) return 'PENDING';
   const raw = experiment[stage.statusKey];
@@ -158,6 +171,7 @@ export const ExperimentDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rankingDone, setRankingDone] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) navigate('/login');
@@ -168,8 +182,18 @@ export const ExperimentDetailPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await experimentsApi.get(parseInt(id, 10));
+      const expId = parseInt(id, 10);
+      const res = await experimentsApi.get(expId);
       setExperiment(res.data);
+
+      try {
+        const rankRes = await rankingApi.get(expId, { limit: 1 });
+        if (rankRes.data && rankRes.data.candidates && rankRes.data.candidates.length > 0) {
+          setRankingDone(true);
+        }
+      } catch {
+        setRankingDone(false);
+      }
     } catch (err: unknown) {
       const axiosErr = err as { response?: { status?: number } };
       if (axiosErr?.response?.status === 404) {
@@ -402,15 +426,19 @@ export const ExperimentDetailPage: React.FC = () => {
 
               <div className="space-y-2">
                 {PIPELINE_STAGES.map((stage, idx) => {
-                  const stageStatus = getStageStatus(stage, experiment);
+                  const stageStatus = getStageStatus(stage, experiment, rankingDone);
                   const statusLabel = stageStatusLabel[stageStatus] ?? stageStatus;
                   const statusCls = stageStatusColor[stageStatus] ?? stageStatusColor.PENDING;
 
                   return (
-                    <div key={stage.id} className="flex items-center gap-4">
+                    <Link
+                      key={stage.id}
+                      to={stage.getPath(id || '')}
+                      className="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer"
+                    >
                       {/* Step number + connector */}
                       <div className="flex flex-col items-center shrink-0" style={{ width: '32px' }}>
-                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm border ${statusCls}`}>
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm border ${statusCls} group-hover:scale-105 transition-transform`}>
                           {stage.icon}
                         </div>
                         {idx < PIPELINE_STAGES.length - 1 && (
@@ -421,7 +449,7 @@ export const ExperimentDetailPage: React.FC = () => {
                       {/* Stage info */}
                       <div className="flex-1 min-w-0 py-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-white">{stage.label}</span>
+                          <span className="text-sm font-medium text-white group-hover:text-primary-300 transition-colors">{stage.label}</span>
                           <span className="text-[10px] text-slate-600 bg-surface-700 px-1.5 py-0.5 rounded">
                             {stage.milestone}
                           </span>
@@ -433,7 +461,7 @@ export const ExperimentDetailPage: React.FC = () => {
                       <div className={`text-xs px-2.5 py-1 rounded-lg border shrink-0 font-medium ${statusCls}`}>
                         {statusLabel}
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

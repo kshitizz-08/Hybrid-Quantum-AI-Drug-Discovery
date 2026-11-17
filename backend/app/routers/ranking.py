@@ -6,6 +6,7 @@ GET  /api/experiments/{id}/ranking  — Get cached rankings
 GET  /api/experiments/{id}/ranking/csv — Download ranked candidates as CSV
 """
 import csv
+from datetime import datetime
 import io
 import logging
 from typing import Optional
@@ -15,6 +16,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
 from app.database import get_db
+from app.models.base import ExperimentStatus
 from app.routers.auth import get_current_user
 from app.services.experiment_service import get_experiment
 from app.services.ranking_service import run_final_ranking, DEFAULT_WEIGHTS
@@ -78,6 +80,11 @@ def compute_ranking(
             docking_is_simulated=docking_is_simulated,
             experiment_id=experiment_id,
         )
+
+        # Mark experiment as completed
+        exp.status = ExperimentStatus.COMPLETED
+        exp.completed_at = datetime.utcnow()
+        db.commit()
 
         _result_cache[experiment_id] = result
         return result

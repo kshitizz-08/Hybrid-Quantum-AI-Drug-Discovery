@@ -124,7 +124,7 @@ const RankingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-surface-950 via-surface-900 to-surface-950">
+    <div className="min-h-screen pt-16 pl-56 bg-gradient-to-br from-surface-950 via-surface-900 to-surface-950">
       {/* Header */}
       <div className="border-b border-white/5 bg-surface-900/70 backdrop-blur-sm px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -156,12 +156,22 @@ const RankingPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-white">🏆 Final Candidate Ranking</h1>
             <p className="text-slate-400 mt-1 text-sm">Weighted composite scores across AI, ADMET, quantum, and docking components</p>
           </div>
-          <button
-            onClick={() => setShowMethodology(!showMethodology)}
-            className="text-xs text-accent-400 hover:text-accent-300 border border-accent-500/30 hover:border-accent-500/50 px-3 py-1.5 rounded-lg transition-colors"
-          >
-            {showMethodology ? '▾' : '▸'} Methodology
-          </button>
+          <div className="flex items-center gap-2">
+            {result && (
+              <button
+                onClick={handleDownloadCsv}
+                className="text-xs bg-primary-600 hover:bg-primary-500 text-white font-medium px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+              >
+                ⬇️ Export CSV
+              </button>
+            )}
+            <button
+              onClick={() => setShowMethodology(!showMethodology)}
+              className="text-xs text-accent-400 hover:text-accent-300 border border-accent-500/30 hover:border-accent-500/50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              {showMethodology ? '▾' : '▸'} Methodology
+            </button>
+          </div>
         </div>
 
         {/* Methodology panel */}
